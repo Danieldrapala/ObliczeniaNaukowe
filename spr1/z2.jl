@@ -1,5 +1,6 @@
 #author: Daniel Drapala 244939
 # Kahan's machine epsilon
+#t-type of a given number Float16,32 or 64
 
 using Printf
 function kahansmethod(t)

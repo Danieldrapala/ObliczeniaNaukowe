@@ -1,6 +1,10 @@
 #author Daniel Drapala 244939
 
-
+#t- type of numbers
+#x- vector n0 one
+#y- vector n0 two
+#temp- temporary array used for sorting numbers in vector
+#every sum- is a partial sum like sum1 and sum2 have to be added to make scalar product
 function algoc(t,x,y)
     temp  =t[]
     for i=1 : length(x)
@@ -63,7 +67,7 @@ sumb=Float32(0)
 sumb64=Float64(0)
 for i in length(x) :-1 :1
     global x,y,x2,y2,sumb,sumb64
-    sumb+=x[i]+y[i]
+    sumb+=x[i]*y[i]
     sumb64+=x2[i]*y2[i]
 end
 
@@ -74,3 +78,4 @@ algd32=algod(Float32,x,y)
 algd64=algod(Float64,x2,y2)
 println("$(algc32) und $(algc64)")
 println("$(algd32) und $(algd64)")
+
