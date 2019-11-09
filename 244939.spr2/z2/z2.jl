@@ -1,4 +1,4 @@
-
+#Daniel Drapala
 using SymPy
 using Plots
 plotly()
