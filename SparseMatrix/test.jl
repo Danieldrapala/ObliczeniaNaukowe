@@ -1,29 +1,44 @@
-
+#Daniel Drapala 244939 - author
   
+
 include("blocksys.jl")
 include("fileinout.jl")
 
-using Main.blocksys,Main.fileinout
+using Test
+using Main.blocksys
+using Main.fileinout
 
-# (A,n,l) = load_matrix_ffile("Dane10000_1_1/A.txt")
-# b = load_vector_ffile("Dane10000_1_1/b.txt")
-# # println(gaussian_elimination_with_pivots(A, n, l, b))
-# p = matrix_to_LU_with_pivots(A, n, l)
-# save_values("./wynikLUPtxt",solve_from_LU_with_pivots(A, n, l, b, p),n,true)
+# Default test sizes
+sizes = [16, 10000, 50000]
 
-(A,n,l) = load_matrix_ffile("Dane10000_1_1/A.txt")
-b = load_vector_ffile("Dane10000_1_1/b.txt")
-matrix_to_LU(A,n,l)
-save_values("./wynikLU.txt",solve_from_LU(A, n, l, b),n,true)
+@testset "Features test for matrix $size" for size in sizes
+    A, n, l = load_matrix_ffile("./Dane$(size)_1_1/A.txt")
+    b = load_vector_ffile("./Dane$(size)_1_1/b.txt")
+    
+    @testset "Computing b from A" begin
+        @test isapprox(right_side_vector(A, n, l), b)
+    end
+    A, n, l = load_matrix_ffile("./Dane$(size)_1_1/A.txt")
+    b = load_vector_ffile("./Dane$(size)_1_1/b.txt")
 
-(A,n,l) = load_matrix_ffile("Dane10000_1_1/A.txt")
-b = load_vector_ffile("Dane10000_1_1/b.txt")
-save_values("./wynikGUP.txt",gaussian_elimination_with_pivots(A, n, l, b),n,true)
+    @testset "Gaussian elimination" begin
+        @test isapprox(\(A, b),solving_eq_after_GE(A, n, l, b))
+    end
+    A, n, l = load_matrix_ffile("./Dane$(size)_1_1/A.txt")
+    b = load_vector_ffile("./Dane$(size)_1_1/b.txt")
 
-(A,n,l) = load_matrix_ffile("Dane10000_1_1/A.txt")
-b = load_vector_ffile("Dane10000_1_1/b.txt")
-save_values("./wynikGU.txt",gaussian_elimination(A, n, l, b),n,true)
+    @testset "Pivoted gaussian elimination" begin
+        @test isapprox( \(A, b),solving_eq_after_GEWP(A, n, l, b))
+    end
+    A, n, l = load_matrix_ffile("./Dane$(size)_1_1/A.txt")
+    b = load_vector_ffile("./Dane$(size)_1_1/b.txt")
 
-(A,n,l) = load_matrix_ffile("Dane10000_1_1/A.txt")
-b = right_side_vector(A,n,l)
-save_values("./wynikGU1.txt",gaussian_elimination(A, n, l, b),n,true)
+    @testset "LU" begin
+        @test isapprox(\(A, b),solving_eq_after_LU(A, n, l, b))
+    end
+    A, n, l = load_matrix_ffile("./Dane$(size)_1_1/A.txt")
+    b = load_vector_ffile("./Dane$(size)_1_1/b.txt")
+    @testset "Pivoted LU" begin
+        @test isapprox(\(A, b),solving_eq_after_LUWP(A, n, l, b) )
+    end
+end
